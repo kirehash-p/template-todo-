@@ -6,8 +6,9 @@
 
 1. `npm install` を実行する
 2. `/.env.sample` を `/.env` にコピーする
-3. データベースの接続情報を `.env` に入れる
-4. `npx prisma db push` を実行する
+3. データベースを作成する。
+4. データベースの接続情報を `.env` に入れる
+5. `npx prisma db push` を実行する
 
 ## 開発用サーバーの起動
 
