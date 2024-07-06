@@ -2,7 +2,7 @@ import fs from "node:fs";
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 
-import { todo_to_html } from "./helper.mjs";
+import { todo_to_html, notify_todo } from "./helper.mjs";
 
 const TIMEOFFSET = 9;
 const app = express();
@@ -86,5 +86,11 @@ app.post("/delete", async (request, response) => {
   });
   response.redirect("/");
 });
+
+// その日が期限のTodoのリマインドを1日に一回実行する
+notify_todo(TIMEOFFSET, prisma);
+setInterval(async () => {
+  notify_todo(TIMEOFFSET, prisma);
+}, 24 * 60 * 60 * 1000);
 
 app.listen(3000);
