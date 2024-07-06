@@ -16,13 +16,15 @@ app.get("/", async (request, response) => {
     todos
       .map(
         (todo) => `
-          <li>
-            <span>${escapeHTML(todo.title)}</span>
-            <form method="post" action="/delete" class="delete-form">
-              <input type="hidden" name="id" value="${todo.id}" />
-              <button type="submit">削除</button>
-            </form>
-          </li>
+          <tr>
+            <td>${escapeHTML(todo.title)}</td>
+            <td>
+              <form action="/delete" method="post" class="delete-form">
+                <input type="hidden" name="id" value="${todo.id}">
+                <button type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
         `,
       )
       .join(""),

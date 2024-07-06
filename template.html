@@ -7,9 +7,16 @@
   </head>
   <body>
     <h1>ToDoリスト</h1>
-    <ul>
-      <!-- todos -->
-    </ul>
+    <table id="todoTable">
+      <thead>
+        <tr>
+          <th>タイトル</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- todos -->
+      </tbody>
+    </table>
     <form action="/create" method="post">
       <input type="text" name="title" />
       <button type="submit">追加</button>
