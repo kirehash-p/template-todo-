@@ -44,8 +44,6 @@ app.post("/create", async (request, response) => {
       // 期限の日付が設定されていないが時刻のみ設定されている場合
       todo_deadline = new Date();
       todo_deadline.setHours(todo_deadline.getHours() + TIMEOFFSET - 24);
-      console.log(todo_deadline.toISOString().slice(11, 16));
-      console.log(request.body.todo_deadline_time);
       if (request.body.todo_deadline_time < todo_deadline.toISOString().slice(11, 16)) {
         // 設定時刻が現在時刻よりも前の場合は翌日に設定
         todo_deadline.setDate(todo_deadline.getDate() + 1);
