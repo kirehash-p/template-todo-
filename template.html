@@ -11,6 +11,8 @@
       <thead>
         <tr>
           <th>タイトル</th>
+          <th>期限</th>
+          <th>操作</th>
         </tr>
       </thead>
       <tbody>
@@ -18,7 +20,9 @@
       </tbody>
     </table>
     <form action="/create" method="post">
-      <input type="text" name="title" />
+      <input type="text" name="todo_title" required/>
+      <input type="date" name="todo_deadline_date" />
+      <input type="time" name="todo_deadline_time" />
       <button type="submit">追加</button>
     </form>
     <script src="/script.js"></script>
