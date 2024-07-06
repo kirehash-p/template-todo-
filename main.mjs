@@ -10,9 +10,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("static"));
 const prisma = new PrismaClient();
 
+const sortable_keys = ["id", "title", "deadline"]; // schema.prismaのTodoモデル内の列のうち、ソートを許可する列
 const template = fs.readFileSync("./template.html", "utf-8");
 app.get("/", async (request, response) => {
-  const todos = await prisma.todo.findMany();
+  let sort_key = request.query.sortkey;
+  if (!sortable_keys.includes(sort_key)) {
+    sort_key = "deadline";
+  }
+  let sort_order = request.query.sortorder;
+  if (sort_order != "asc" && sort_order != "desc") {
+    sort_order = "asc";
+  }
+  const todos = await prisma.todo.findMany({
+    orderBy: {
+      [sort_key]: sort_order,
+    },
+  });
   const html = template.replace(
     "<!-- todos -->",
     todos
