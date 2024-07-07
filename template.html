@@ -27,10 +27,13 @@
         <!-- todos -->
       </tbody>
     </table>
-    <form action="/create" method="post">
-      <input type="text" name="todo_title" required/>
-      <input type="date" name="todo_deadline_date" />
-      <input type="time" name="todo_deadline_time" />
+    <form id="todo_add_form" action="/create" method="post" onsubmit="return validate_form(this)">
+      <label for="todo_title">タイトル</label>
+      <input type="text" name="todo_title" id="todo_title" class="form-text-255"/>
+      <label for="todo_deadline_date">期限(日にち)</label>
+      <input type="date" name="todo_deadline_date" id="todo_deadline_date" class="form-date-YYMMDD form-allow-empty"/>
+      <label for="todo_deadline_time">期限(時刻)</label>
+      <input type="time" name="todo_deadline_time" id="todo_deadline_time" class="form-time-HHSS form-allow-empty"/>
       <button type="submit">追加</button>
     </form>
     <script src="/script.js"></script>
