@@ -13,10 +13,10 @@ const tableSorts = document.querySelectorAll(".table-sort a");
 for (const tableSort of tableSorts) {
   tableSort.onclick = () => {
     let [sort_key, sort_order] = tableSort.id.split("_");
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("sortkey", sort_key);
-    currentUrl.searchParams.set("sortorder", sort_order);
-    window.location.href = currentUrl.href;
+    let baseUrl = new URL(window.location.origin + window.location.pathname);
+    baseUrl.searchParams.set("sortkey", sort_key);
+    baseUrl.searchParams.set("sortorder", sort_order);
+    window.location.href = baseUrl.href;
   };
 }
 
