@@ -56,14 +56,13 @@ app.post("/create", async (request, response) => {
     } else {
       if (request.body.todo_deadline_time != "") {
         // 期限の日付が設定されていないが時刻のみ設定されている場合
-        todo_deadline = new Date();
-        todo_deadline.setHours(todo_deadline.getHours() + TIMEOFFSET - 24);
-        if (request.body.todo_deadline_time < todo_deadline.toISOString().slice(11, 16)) {
-          // 設定時刻が現在時刻よりも前の場合は翌日に設定
+        let now = new Date();
+        const [hours, minutes] = request.body.todo_deadline_time.split(":").map(Number);
+        todo_deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
+        if (now > todo_deadline) {
           todo_deadline.setDate(todo_deadline.getDate() + 1);
         }
-        todo_deadline.setHours(parseInt(request.body.todo_deadline_time.slice(0, 2)) + TIMEOFFSET);
-        todo_deadline.setMinutes(parseInt(request.body.todo_deadline_time.slice(3, 5)));
+        todo_deadline.setHours(todo_deadline.getHours() + TIMEOFFSET);
         todo_deadline_include_time = true;
       } else {
         // 期限が設定されていない場合
