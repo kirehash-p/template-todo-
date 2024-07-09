@@ -26,6 +26,7 @@ app.get("/", async (request, response) => {
       [sort_key]: sort_order,
     },
   });
+  
   const html = template.replace(
     "<!-- todos -->",
     todos
@@ -35,6 +36,7 @@ app.get("/", async (request, response) => {
       .join(""),
   );
   response.send(html);
+
 });
 
 app.post("/create", async (request, response) => {
@@ -88,6 +90,35 @@ app.post("/delete", async (request, response) => {
     await prisma.todo.delete({
       where: { id: parseInt(request.body.id) },
     });
+    response.redirect("/");
+  } catch (error) {
+    response.redirect("/?message=error");
+  }
+});
+
+app.post("/completed", async (request, response) => {
+  try {
+    const completed = await prisma.todo.findUnique({
+      where: { id: parseInt(request.body.id) }
+    });
+
+    
+    const now=new Date()
+    await prisma.completed.create({
+      data: {
+        title: completed.title,
+        deadline: completed.deadline,
+        deadline_include_time: completed.deadline_include_time,
+        completedAt: now,
+        createdAt: completed.createdAt,
+        updatedAt: now
+      }
+    });
+
+    await prisma.todo.delete({
+      where: { id: parseInt(request.body.id) },
+    });
+
     response.redirect("/");
   } catch (error) {
     response.redirect("/?message=error");
