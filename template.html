@@ -7,11 +7,33 @@
   </head>
   <body>
     <h1>ToDoリスト</h1>
-    <ul>
-      <!-- todos -->
-    </ul>
-    <form action="/create" method="post">
-      <input type="text" name="title" />
+    <table id="todoTable">
+      <thead>
+        <tr>
+          <th>
+            <span class="table-index">タイトル</span>
+            <span class="table-sort"><a href="#" id="title_asc" title="タイトルに関して昇順表示">△</a><a href="#" id="title_desc" title="タイトルに関して降順表示">▽</a></span>
+          </th>
+          <th>
+            <span class="table-index">期限</span>
+            <span class="table-sort"><a href="#" id="deadline_asc" title="期限に関して昇順表示">△</a><a href="#" id="deadline_desc" title="期限に関して降順表示">▽</a></span>
+          </th>
+          <th>
+            <span class="table-index">操作</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- todos -->
+      </tbody>
+    </table>
+    <form id="todo_add_form" action="/create" method="post" onsubmit="return validate_form(this)">
+      <label for="todo_title">タイトル</label>
+      <input type="text" name="todo_title" id="todo_title" class="form-text-255"/>
+      <label for="todo_deadline_date">期限(日にち)</label>
+      <input type="date" name="todo_deadline_date" id="todo_deadline_date" class="form-date-YYMMDD form-allow-empty"/>
+      <label for="todo_deadline_time">期限(時刻)</label>
+      <input type="time" name="todo_deadline_time" id="todo_deadline_time" class="form-time-HHSS form-allow-empty"/>
       <button type="submit">追加</button>
     </form>
     <script src="/script.js"></script>
