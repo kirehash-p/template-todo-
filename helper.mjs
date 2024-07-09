@@ -16,6 +16,7 @@ export function todo_to_html(todo) {
                 <td>
                     <form action="/delete" method="post" class="delete-form">
                         <input type="hidden" name="id" value="${todo.id}">
+                        <input type="hidden" name="type" value="todo">
                         <button type="submit">Delete</button>
                     </form>
                     <form action="/completed" method="post" class="completed-form">
@@ -34,8 +35,9 @@ export function completed_to_html(completed) {
                 <td>${escapeHTML(completed.title)}</td>
                 <td>${completed_at_str}</td>
                 <td>
-                    <form action="/delete?type=completed" method="post" class="delete-form">
+                    <form action="/delete" method="post" class="delete-form">
                         <input type="hidden" name="id" value="${completed.id}">
+                        <input type="hidden" name="type" value="completed">
                         <button type="submit">Delete</button>
                     </form>
                 </td>

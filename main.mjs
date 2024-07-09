@@ -111,9 +111,16 @@ app.post("/create", async (request, response) => {
 
 app.post("/delete", async (request, response) => {
   try {
-    await prisma.todo.delete({
-      where: { id: parseInt(request.body.id) },
-    });
+    if(request.body.type=="todo"){
+      await prisma.todo.delete({
+        where: { id: parseInt(request.body.id) },
+      });
+    }
+    else if(request.body.type=="completed"){
+      await prisma.completed.delete({
+        where: { id: parseInt(request.body.id) },
+      });
+    }
     response.redirect("/");
   } catch (error) {
     response.redirect("/?message=error");
