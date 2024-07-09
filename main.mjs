@@ -2,7 +2,8 @@ import fs from "node:fs";
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 
-import { todo_to_html, notify_todo } from "./helper.mjs";
+import { todo_to_html, completed_to_html, notify_todo } from "./helper.mjs";
+import { debug } from "node:console";
 
 const TIMEOFFSET = 9;
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.static("static"));
 const prisma = new PrismaClient();
 
 const sortable_keys = ["id", "title", "deadline"]; // schema.prismaのTodoモデル内の列のうち、ソートを許可する列
+const sortable_keys_completed = ["id","title","completedAt"]
 const template = fs.readFileSync("./template.html", "utf-8");
 app.get("/", async (request, response) => {
   let sort_key = request.query.sortkey;
@@ -26,12 +28,34 @@ app.get("/", async (request, response) => {
       [sort_key]: sort_order,
     },
   });
-  
+
+  let sort_key_completed=request.query.sortkey_completed;
+  if (!sortable_keys_completed.includes(sort_key_completed)) {
+    sort_key_completed = "completedAt";
+  }
+  let sort_order_completed = request.query.sortorder_completed;
+  if (sort_order_completed != "asc" && sort_order_completed != "desc") {
+    sort_order_completed = "asc";
+  }
+  const completeds = await prisma.completed.findMany({
+    orderBy: {
+      [sort_key_completed]: sort_order_completed,
+    },
+  });
+
   const html = template.replace(
     "<!-- todos -->",
     todos
       .map(
         (todo) => todo_to_html(todo),
+      )
+      .join(""),
+
+  ).replace(
+    "<!-- completeds -->",
+    completeds
+      .map(
+        (completed) => completed_to_html(completed),
       )
       .join(""),
   );
@@ -96,25 +120,23 @@ app.post("/delete", async (request, response) => {
   }
 });
 
+//todoを完了済みに
 app.post("/completed", async (request, response) => {
   try {
-    const completed = await prisma.todo.findUnique({
+    const todo = await prisma.todo.findUnique({
       where: { id: parseInt(request.body.id) }
-    });
-
-    
-    const now=new Date()
+    });    
+    const now=new Date();
     await prisma.completed.create({
       data: {
-        title: completed.title,
-        deadline: completed.deadline,
-        deadline_include_time: completed.deadline_include_time,
+        title: todo.title,
+        deadline: todo.deadline,
+        deadline_include_time: todo.deadline_include_time,
         completedAt: now,
-        createdAt: completed.createdAt,
+        createdAt: todo.createdAt,
         updatedAt: now
       }
     });
-
     await prisma.todo.delete({
       where: { id: parseInt(request.body.id) },
     });
