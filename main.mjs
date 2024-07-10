@@ -133,7 +133,8 @@ app.post("/completed", async (request, response) => {
     const todo = await prisma.todo.findUnique({
       where: { id: parseInt(request.body.id) }
     });    
-    const now=new Date();
+    const now=new Date;
+    now.setHours(now.getHours()+TIMEOFFSET);
     await prisma.completed.create({
       data: {
         title: todo.title,
