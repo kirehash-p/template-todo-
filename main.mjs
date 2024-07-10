@@ -2,7 +2,7 @@ import fs from "node:fs";
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 
-import { todo_to_html, notify_todo } from "./helper.mjs";
+import { todo_to_html, completed_to_html, notify_todo } from "./helper.mjs";
 
 const TIMEOFFSET = 9;
 const app = express();
@@ -11,6 +11,7 @@ app.use(express.static("static"));
 const prisma = new PrismaClient();
 
 const sortable_keys = ["id", "title", "deadline"]; // schema.prismaのTodoモデル内の列のうち、ソートを許可する列
+const sortable_keys_completed = ["id","title","completedAt"]
 const template = fs.readFileSync("./template.html", "utf-8");
 app.get("/", async (request, response) => {
   let sort_key = request.query.sortkey;
@@ -26,6 +27,21 @@ app.get("/", async (request, response) => {
       [sort_key]: sort_order,
     },
   });
+
+  let sort_key_completed=request.query.sortkey_completed;
+  if (!sortable_keys_completed.includes(sort_key_completed)) {
+    sort_key_completed = "completedAt";
+  }
+  let sort_order_completed = request.query.sortorder_completed;
+  if (sort_order_completed != "asc" && sort_order_completed != "desc") {
+    sort_order_completed = "asc";
+  }
+  const completeds = await prisma.completed.findMany({
+    orderBy: {
+      [sort_key_completed]: sort_order_completed,
+    },
+  });
+
   const html = template.replace(
     "<!-- todos -->",
     todos
@@ -33,8 +49,17 @@ app.get("/", async (request, response) => {
         (todo) => todo_to_html(todo),
       )
       .join(""),
+
+  ).replace(
+    "<!-- completeds -->",
+    completeds
+      .map(
+        (completed) => completed_to_html(completed),
+      )
+      .join(""),
   );
   response.send(html);
+
 });
 
 app.post("/create", async (request, response) => {
@@ -85,9 +110,44 @@ app.post("/create", async (request, response) => {
 
 app.post("/delete", async (request, response) => {
   try {
+    if(request.body.type=="todo"){
+      await prisma.todo.delete({
+        where: { id: parseInt(request.body.id) },
+      });
+    }
+    else if(request.body.type=="completed"){
+      await prisma.completed.delete({
+        where: { id: parseInt(request.body.id) },
+      });
+    }
+    response.redirect("/");
+  } catch (error) {
+    response.redirect("/?message=error");
+  }
+});
+
+//todoを完了済みに
+app.post("/completed", async (request, response) => {
+  try {
+    const todo = await prisma.todo.findUnique({
+      where: { id: parseInt(request.body.id) }
+    });    
+    const now=new Date;
+    now.setHours(now.getHours()+TIMEOFFSET);
+    await prisma.completed.create({
+      data: {
+        title: todo.title,
+        deadline: todo.deadline,
+        deadline_include_time: todo.deadline_include_time,
+        completedAt: now,
+        createdAt: todo.createdAt,
+        updatedAt: now
+      }
+    });
     await prisma.todo.delete({
       where: { id: parseInt(request.body.id) },
     });
+
     response.redirect("/");
   } catch (error) {
     response.redirect("/?message=error");

@@ -16,6 +16,28 @@ export function todo_to_html(todo) {
                 <td>
                     <form action="/delete" method="post" class="delete-form">
                         <input type="hidden" name="id" value="${todo.id}">
+                        <input type="hidden" name="type" value="todo">
+                        <button type="submit">Delete</button>
+                    </form>
+                    <form action="/completed" method="post" class="completed-form">
+                        <input type="hidden" name="id" value="${todo.id}">
+                        <button type="submit">Completed</button>
+                    </form>
+                </td>
+            </tr>
+        `;
+}
+
+export function completed_to_html(completed) {
+    let completed_at_str = completed.completedAt.toISOString().slice(0, 10) + " " + completed.completedAt.toISOString().slice(11, 16);
+    return `
+            <tr>
+                <td>${escapeHTML(completed.title)}</td>
+                <td>${completed_at_str}</td>
+                <td>
+                    <form action="/delete" method="post" class="delete-form">
+                        <input type="hidden" name="id" value="${completed.id}">
+                        <input type="hidden" name="type" value="completed">
                         <button type="submit">Delete</button>
                     </form>
                 </td>
@@ -70,3 +92,4 @@ export function notify_todo(TIMEOFFSET, prisma) {
     }
     , wait_time);
 }
+

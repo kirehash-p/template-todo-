@@ -12,11 +12,11 @@
         <tr>
           <th>
             <span class="table-index">タイトル</span>
-            <span class="table-sort"><a href="#" id="title_asc" title="タイトルに関して昇順表示">△</a><a href="#" id="title_desc" title="タイトルに関して降順表示">▽</a></span>
+            <span class="table-sort"><a href="#" id="title_asc_todo" title="タイトルに関して昇順表示">△</a><a href="#" id="title_desc_todo" title="タイトルに関して降順表示">▽</a></span>
           </th>
           <th>
             <span class="table-index">期限</span>
-            <span class="table-sort"><a href="#" id="deadline_asc" title="期限に関して昇順表示">△</a><a href="#" id="deadline_desc" title="期限に関して降順表示">▽</a></span>
+            <span class="table-sort"><a href="#" id="deadline_asc_todo" title="期限に関して昇順表示">△</a><a href="#" id="deadline_desc_todo" title="期限に関して降順表示">▽</a></span>
           </th>
           <th>
             <span class="table-index">操作</span>
@@ -36,6 +36,29 @@
       <input type="time" name="todo_deadline_time" id="todo_deadline_time" class="form-time-HHSS form-allow-empty"/>
       <button type="submit">追加</button>
     </form>
+    <br>
+    <h1>完了リスト</h1>
+    <table id="todoTable">
+      <thead>
+        <tr>
+          <th>
+            <span class="table-index">タイトル</span>
+            <span class="table-sort"><a href="#" id="title_asc_completed" title="タイトルに関して昇順表示">△</a><a href="#" id="title_desc_completed" title="タイトルに関して降順表示">▽</a></span>
+          </th>
+          <th>
+            <span class="table-index">完了日</span>
+            <span class="table-sort"><a href="#" id="completedAt_asc_completed" title="完了日に関して昇順表示">△</a><a href="#" id="completedAt_desc_completed" title="完了日に関して降順表示">▽</a></span>
+          </th>
+          <th>
+            <span class="table-index">操作</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- completeds -->
+      </tbody>
+    </table>
+
     <script src="/script.js"></script>
   </body>
 </html>
