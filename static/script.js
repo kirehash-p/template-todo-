@@ -8,6 +8,16 @@ for (const deleteForm of deleteForms) {
   };
 }
 
+const completedForms = document.querySelectorAll(".completed-form");
+for (const completedForm of completedForms) {
+  completedForm.onsubmit = (e) => {
+    if (!window.confirm("本当に完了状態にしますか？")) {
+      e.preventDefault();
+    }
+  };
+}
+
+
 // table-sortクラスのa要素をクリックしたときの処理
 const tableSorts = document.querySelectorAll(".table-sort a");
 for (const tableSort of tableSorts) {
