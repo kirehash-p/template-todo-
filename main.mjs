@@ -3,7 +3,6 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 
 import { todo_to_html, completed_to_html, notify_todo } from "./helper.mjs";
-import { debug } from "node:console";
 
 const TIMEOFFSET = 9;
 const app = express();

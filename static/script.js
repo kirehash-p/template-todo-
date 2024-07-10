@@ -24,8 +24,7 @@ const saveParams=["sortkey","sortorder","sortkey_completed","sortorder_completed
 
 for (const tableSort of tableSorts) {
   tableSort.onclick = () => {
-    console.log("ok");
-    let [sort_key, sort_order, type] = tableSort.id.split("_");
+    let [sort_key, sort_order, sort_object] = tableSort.id.split("_");
 
     let baseUrl = new URL(window.location.origin + window.location.pathname);
     for(const [key,value] of window.location.search){
@@ -34,11 +33,11 @@ for (const tableSort of tableSorts) {
       }
     }
 
-    if(type=="todo"){
+    if(sort_object=="todo"){
       baseUrl.searchParams.set("sortkey", sort_key);
       baseUrl.searchParams.set("sortorder", sort_order);    
     }
-    else if(type=="completed"){
+    else if(sort_object=="completed"){
       baseUrl.searchParams.set("sortkey_completed", sort_key);
       baseUrl.searchParams.set("sortorder_completed", sort_order);
     }

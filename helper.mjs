@@ -93,12 +93,3 @@ export function notify_todo(TIMEOFFSET, prisma) {
     , wait_time);
 }
 
-const saveParams=["sortkey","sortorder","sortkey_completed","sortorder_completed"];
-export function queryparameter_reservation(nextUrl,currentUrl){
-    for(const [key,value] of currentUrl.search){
-        if(saveParams.includes(key)){
-          nextUrl.searchParams.set(key,value);
-        }
-    }
-    return nextUrl;
-}
