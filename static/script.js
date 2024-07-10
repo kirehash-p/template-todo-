@@ -20,21 +20,29 @@ for (const completedForm of completedForms) {
 
 // table-sortクラスのa要素をクリックしたときの処理
 const tableSorts = document.querySelectorAll(".table-sort a");
+const saveParams=["sortkey","sortorder","sortkey_completed","sortorder_completed"];
+
 for (const tableSort of tableSorts) {
   tableSort.onclick = () => {
+    console.log("ok");
     let [sort_key, sort_order, type] = tableSort.id.split("_");
-    let baseUrl = new URL(window.location.origin + window.location.pathname + window.location.search);
+
+    let baseUrl = new URL(window.location.origin + window.location.pathname);
+    for(const [key,value] of window.location.search){
+      if(saveParams.includes(key)){
+        baseUrl.searchParams.set(key,value);
+      }
+    }
 
     if(type=="todo"){
       baseUrl.searchParams.set("sortkey", sort_key);
-      baseUrl.searchParams.set("sortorder", sort_order);
-      window.location.href = baseUrl.href;
+      baseUrl.searchParams.set("sortorder", sort_order);    
     }
     else if(type=="completed"){
       baseUrl.searchParams.set("sortkey_completed", sort_key);
       baseUrl.searchParams.set("sortorder_completed", sort_order);
-      window.location.href = baseUrl.href; 
     }
+    window.location.href = baseUrl.href;
   };
 }
 
