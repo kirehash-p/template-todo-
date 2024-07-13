@@ -132,6 +132,10 @@ document.querySelectorAll(".edit-button").forEach((button) => {
       updateForm.querySelector('input[name="todo_deadline_time"]').value =
         newTime;
 
+      if (updateForm.onsubmit() === false) {
+        return;
+      }
+
       fetch(updateForm.action, {
         method: "PUT",
         headers: {
