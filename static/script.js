@@ -61,7 +61,7 @@ function validate_form(form) {
         continue;
       }
     } else if (input.value == "") {
-      const label = form.querySelector(`label[for=${input.id}]`);
+      const label = form.querySelector(`label[for=${input.name}]`);
       alert(`${label.textContent}は入力必須です`);
       return false;
     }

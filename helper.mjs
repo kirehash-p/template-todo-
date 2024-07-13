@@ -28,13 +28,15 @@ export function todo_to_html(todo) {
               <button type="submit" class="py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600">完了</button>
           </form>
           <button type="button" class="py-1 px-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 edit-button">編集</button>
-          <form action="/update" method="post" class="hidden update-form" onsubmit="return validate_form(this);">
+          <form action="/update" method="post" class="hidden update-form" onsubmit="return validate_form(this)";>
               <input type="hidden" name="id" value="${todo.id}">
               <input type="hidden" name="todo_title" value="${escapeHTML(
                 todo.title
               )}">
-              <input type="date" name="todo_deadline_date" class="hidden form-date-YYMMDD">
-              <input type="time" name="todo_deadline_time" class="hidden form-time-HHMM">
+              <label for="todo_deadline_date" class="hidden">期限</label>
+              <input type="date" name="todo_deadline_date" class="hidden form-date-YYMMDD form-allow-empty">
+              <label for="todo_deadline_time" class="hidden">時刻</label>
+              <input type="time" name="todo_deadline_time" class="hidden form-time-HHMM form-allow-empty">
           </form>
       </div>
     </td>
