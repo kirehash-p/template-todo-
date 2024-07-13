@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: exampledb
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: examplepassword
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+
+# npx prisma migrate dev --name init

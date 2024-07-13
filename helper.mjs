@@ -28,7 +28,7 @@ export function todo_to_html(todo) {
               <button type="submit" class="py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600">完了</button>
           </form>
           <button type="button" class="py-1 px-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 edit-button">編集</button>
-          <form action="/update" method="post" class="hidden update-form" onsubmit="return validate_form(this);>
+          <form action="/update" method="post" class="hidden update-form" onsubmit="return validate_form(this);">
               <input type="hidden" name="id" value="${todo.id}">
               <input type="hidden" name="todo_title" value="${escapeHTML(
                 todo.title
