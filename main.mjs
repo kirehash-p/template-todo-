@@ -51,6 +51,56 @@ app.get("/", async (request, response) => {
   response.send(html);
 });
 
+//編集
+app.get("/edit", async (request, response) => {
+  const todo = await prisma.todo.findUnique({
+    where: { id: parseInt(request.query.id) },
+  });
+
+  const todo_deadline_str = todo.deadline
+    ? todo.deadline.toISOString().slice(0, 10)
+    : "";
+  const todo_deadline_time_str = todo.deadline
+    ? todo.deadline.toISOString().slice(11, 16)
+    : "";
+
+  const html = `
+    <!doctype html>
+    <html lang="ja">
+    <head>
+      <meta charset="UTF-8">
+      <title>ToDoリスト</title>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <div class="container mx-auto p-4 w-full md:w-2/3">
+        <form id="todo_edit_form" action="/update" method="post" onsubmit="return validate_form(this)" class="bg-white p-4 rounded shadow">
+          <input type="hidden" name="id" value="${todo.id}">
+          <div class="flex items-center mb-2">
+            <label for="todo_title" class="mr-2">タイトル</label>
+            <input type="text" name="todo_title" id="todo_title" value="${escapeHTML(
+              todo.title
+            )}" class="form-text-255 py-1 px-2 border border-gray-300 rounded flex-grow">
+          </div>
+          <div class="flex items-center mb-2">
+            <label for="todo_deadline_date" class="form-text-255 mr-2">期限(日にち)</label>
+            <input type="date" name="todo_deadline_date" id="todo_deadline_date" value="${todo_deadline_str}" class="form-date-YYMMDD form-allow-empty py-1 px-2 border border-gray-300 rounded">
+          </div>
+          <div class="flex items-center mb-2">
+            <label for="todo_deadline_time" class="mr-2">期限(時刻)</label>
+            <input type="time" name="todo_deadline_time" id="todo_deadline_time" value="${todo_deadline_time_str}" class="form-time-HHMM form-allow-empty py-1 px-2 border border-gray-300 rounded">
+          </div>
+          <div class="flex justify-end">
+            <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600">更新</button>
+          </div>
+        </form>
+      </div>
+    </body>
+    </html>
+  `;
+  response.send(html);
+});
+
 app.post("/create", async (request, response) => {
   try {
     let todo_deadline;
@@ -178,6 +228,67 @@ app.post("/incomplete", async (request, response) => {
     response.redirect("/");
   } catch (error) {
     response.redirect("/?message=error");
+  }
+});
+
+//追加済みタスクの期限を変更する
+app.put("/update", async (request, response) => {
+  try {
+    let todo_deadline;
+    let todo_deadline_include_time = false;
+
+    if (request.body.todo_deadline_date != "") {
+      if (request.body.todo_deadline_time == "") {
+        todo_deadline = new Date(request.body.todo_deadline_date);
+        todo_deadline.setHours(todo_deadline.getHours() + TIMEOFFSET);
+        todo_deadline_include_time = false;
+      } else {
+        todo_deadline = new Date(
+          request.body.todo_deadline_date +
+            "T" +
+            request.body.todo_deadline_time
+        );
+        todo_deadline.setHours(todo_deadline.getHours() + TIMEOFFSET);
+        todo_deadline_include_time = true;
+      }
+    } else {
+      if (request.body.todo_deadline_time != "") {
+        let now = new Date();
+        const [hours, minutes] = request.body.todo_deadline_time
+          .split(":")
+          .map(Number);
+        todo_deadline = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          hours,
+          minutes,
+          0,
+          0
+        );
+        if (now > todo_deadline) {
+          todo_deadline.setDate(todo_deadline.getDate() + 1);
+        }
+        todo_deadline.setHours(todo_deadline.getHours() + TIMEOFFSET);
+        todo_deadline_include_time = true;
+      } else {
+        todo_deadline = null;
+        todo_deadline_include_time = false;
+      }
+    }
+
+    await prisma.todo.update({
+      where: { id: parseInt(request.body.id) },
+      data: {
+        title: request.body.todo_title,
+        deadline: todo_deadline,
+        deadline_include_time: todo_deadline_include_time,
+      },
+    });
+
+    response.status(200).send("OK");
+  } catch (error) {
+    response.status(500).send("Error");
   }
 });
 

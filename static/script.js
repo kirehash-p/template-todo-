@@ -94,3 +94,66 @@ window.onload = () => {
     window.location.href = "/";
   }
 }
+document.querySelectorAll(".edit-button").forEach((button) => {
+  button.addEventListener("click", function () {
+    const row = this.closest("tr");
+    const deadlineCell = row.children[1];
+    const updateForm = row.querySelector(".update-form");
+
+    const deadlineText = deadlineCell.textContent.trim();
+    let [date, time] = deadlineText.split(" ");
+
+    deadlineCell.innerHTML = `
+        <input type="date" name="todo_deadline_date" value="${
+          date || ""
+        }" class="py-1 px-2 border border-gray-300 rounded">
+        <input type="time" name="todo_deadline_time" value="${
+          time || ""
+        }" class="py-1 px-2 border border-gray-300 rounded">
+      `;
+
+    this.textContent = "保存";
+    this.classList.remove("bg-yellow-500", "hover:bg-yellow-600");
+    this.classList.add("bg-green-500", "hover:bg-green-600");
+    this.classList.add("save-button");
+
+    button.removeEventListener("click", arguments.callee);
+
+    this.addEventListener("click", function () {
+      const newDate = deadlineCell.querySelector(
+        'input[name="todo_deadline_date"]'
+      ).value;
+      const newTime = deadlineCell.querySelector(
+        'input[name="todo_deadline_time"]'
+      ).value;
+
+      updateForm.querySelector('input[name="todo_deadline_date"]').value =
+        newDate;
+      updateForm.querySelector('input[name="todo_deadline_time"]').value =
+        newTime;
+
+      fetch(updateForm.action, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams(new FormData(updateForm)),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("更新に失敗しました");
+          }
+          return response.text();
+        })
+        .then(() => {
+          window.confirm("更新に成功しました");
+          window.location.reload();
+        })
+        .catch((error) => {
+          window.alert("エラーが発生しました", error.message);
+          alert(error.message);
+          window.location.reload();
+        });
+    });
+  });
+});

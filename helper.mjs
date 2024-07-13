@@ -13,7 +13,7 @@ export function todo_to_html(todo) {
     }
   }
   return `
-  <tr>
+  <tr data-id="${todo.id}">
     <td class="border border-gray-300 py-2 px-4">${escapeHTML(todo.title)}</td>
     <td class="border border-gray-300 py-2 px-4">${todo_deadline_str}</td>
     <td class="border border-gray-300 py-2 px-4">
@@ -26,6 +26,15 @@ export function todo_to_html(todo) {
           <form action="/completed" method="post" class="completed-form">
               <input type="hidden" name="id" value="${todo.id}">
               <button type="submit" class="py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600">完了</button>
+          </form>
+          <button type="button" class="py-1 px-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 edit-button">編集</button>
+          <form action="/update" method="post" class="hidden update-form">
+              <input type="hidden" name="id" value="${todo.id}">
+              <input type="hidden" name="todo_title" value="${escapeHTML(
+                todo.title
+              )}">
+              <input type="date" name="todo_deadline_date" class="hidden">
+              <input type="time" name="todo_deadline_time" class="hidden">
           </form>
       </div>
     </td>
