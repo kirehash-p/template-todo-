@@ -91,5 +91,6 @@ window.onload = () => {
     } else {
       alert(message);
     }
+    window.location.href = "/";
   }
 }
